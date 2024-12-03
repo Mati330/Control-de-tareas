@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Principal{% endblock %}
+
+{% block content %}
+    <h1>Panel de Asignación</h1>
+
+    <h2>Agentes</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Agente</th>
+          <th>Carga de Trabajo</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for agente in agentes %}
+              <tr>
+                  <td>{{ agente.nombre }}</td>
+                  <td>{{ agente.carga_trabajo }}</td>
+              </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+
+
+    <h2>Casuísticas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Casuística</th>
+                <th>Peso</th>
+                <th>Asignar a:</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for casuistica in casuisticas %}
+                <tr>
+                    <td>{{ casuistica.nombre }}</td>
+                    <td>{{ casuistica.peso }}</td>
+                    <td><!-- Aquí podrías agregar lógica para asignar --></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+{% endblock %}

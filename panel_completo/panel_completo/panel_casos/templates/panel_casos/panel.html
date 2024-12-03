@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Panel de Asignación{% endblock %}
+
+{% block content %}
+    <h1>Panel de Asignación</h1>
+
+    <h2>Agentes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Agente</th>
+                <th>Carga de Trabajo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agente in agentes %}
+                <tr>
+                    <td class="nombre-agente">{{ agente.nombre }}</td>
+                    <td class="nombre-agente">{{ agente.carga_trabajo }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Casuísticas</h2>
+    <table id="tabla-casuisticas">
+        <thead>
+            <tr>
+                <th>Casuística</th>
+                <th>Peso</th>
+                <th>Asignar a:</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for casuistica in casuisticas %}
+                <tr>
+                    <td class="nombre-agente">{{ casuistica.nombre }}</td>
+                    <td class="nombre-agente">{{ casuistica.peso }}</td>
+                    <td>
+                        <select id="agentes-{{ casuistica.id }}" multiple>
+                            {% for agente in agentes %}
+                                <option value="{{ agente.id }}">{{ agente.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <button data-casuistica-id="{{ casuistica.id }}" class="guardar-asignacion">Guardar</button>
+                        <button data-casuistica-id="{{ casuistica.id }}" class="limpiar-asignacion">Limpiar</button> 
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.guardar-asignacion').click(function() {
+                var casuisticaId = $(this).data('casuistica-id');
+                var agenteIds = $('#agentes-' + casuisticaId).val() || [];
+        
+                $.ajax({
+                    type: 'POST',
+                    url: '/panel_casos/asignar/',
+                    data: JSON.stringify({casuistica_id: casuisticaId, agente_ids: agenteIds}),
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+                    },
+                    success: function(data) {
+                        if (data.success) {
+                            // Actualizar la tabla de agentes
+                            $.each(data.agente_data, function(index, agente) {
+                                $('#carga-trabajo-' + agente.id).text(agente.carga_trabajo);
+                            });
+                            alert('Casuística asignada correctamente!');
+                        } else {
+                            alert('Error: ' + data.error);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error AJAX:", xhr, status, error);
+                        alert('Error al asignar casuística. Inténtalo de nuevo más tarde.');
+                    }
+                });
+            });
+
+            $('.limpiar-asignacion').click(function() {
+                var casuisticaId = $(this).data('casuistica-id');
+    
+                $.ajax({
+                    type: 'POST',
+                    url: '/panel_casos/limpiar/',
+                    data: JSON.stringify({ casuistica_id: casuisticaId }),
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+                    },
+                    success: function(data) {
+                        if (data.success) {
+                            $('#agentes-' + casuisticaId).val([]); // Limpia el select
+                            actualizarTablaAgentes(data); //Actualiza la tabla de agentes
+                            alert('Asignaciones limpiadas correctamente!');
+                        } else {
+                            alert('Error: ' + data.error);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error AJAX:", xhr, status, error);
+                        alert('Error al limpiar asignaciones. Inténtalo de nuevo más tarde.');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Crear Agente y Casuística{% endblock %}
+
+{% block content %}
+    <h1>Crear Agente y Casuística</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% crispy form %}
+        <button type="submit">Crear</button>
+    </form>
+{% endblock %}
+

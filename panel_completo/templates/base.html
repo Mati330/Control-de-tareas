@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Panel de Gestión</h1>
+        <nav>
+            <a href="{% url 'panel_vista' %}">Panel Principal</a>
+            <a href="{% url 'crear_agente_casuistica' %}">Crear Agente</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+            <h1>Panel de Asignación</h1>
+
+            <h2>Agentes</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Agente</th>
+                  <th>Carga de Trabajo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for agente in agentes %}
+                  <tr>
+                    <td>{{ agente.nombre }}</td>
+                    <td>{{ agente.carga_trabajo }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <h2>Casuísticas</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Casuística</th>
+                  <th>Peso</th>
+                  <th>Asignar a:</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for casuistica in casuisticas %}
+                  <tr>
+                    <td>{{ casuistica.nombre }}</td>
+                    <td>{{ casuistica.peso }}</td>
+                    <td><!-- Aquí podrías agregar lógica para asignar --></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2024 Panel de Gestión</p>
+    </footer>
+</body>
+</html>
